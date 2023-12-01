@@ -29,6 +29,7 @@ with open('bitcoin_data.csv', 'a', newline='') as csvfile:
     while True:
         ts = time.time()
         bid, ask, mark = get_bitcoin_data() # Get Bitcoin data
-        writer.writerow({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark}) # Write data to CSV
-        print({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark})
+        if (bid is not None):
+            writer.writerow({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark}) # Write data to CSV
+            print({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark})
         time.sleep(5) # Wait for 5 seconds
