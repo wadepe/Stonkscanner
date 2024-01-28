@@ -1,6 +1,7 @@
 import robin_stocks as r
 import csv
 import time
+import subprocess
 
 # Replace these with your Robinhood login credentials
 username = 'wadepe@yahoo.com'
@@ -17,6 +18,13 @@ def get_bitcoin_data():
     mark_price = bitcoin_data['mark_price']
     return bid_price, ask_price, mark_price
 
+def check_internet():
+    try:
+      subprocess.check_output(["ping", "-c", "1", "8.8.8.8"])
+      return True
+    except subprocess.CalledProcessError:
+      return False
+
 # Create a CSV file and write headers if the file doesn't exist
 with open('bitcoin_data.csv', 'a', newline='') as csvfile:
     fieldnames = ['Time', 'Bid Price', 'Ask Price', 'Mark Price']
@@ -28,8 +36,13 @@ with open('bitcoin_data.csv', 'a', newline='') as csvfile:
     
     while True:
         ts = time.time()
-        bid, ask, mark = get_bitcoin_data() # Get Bitcoin data
-        if (bid is not None):
+        if check_internet():
+          bid, ask, mark = get_bitcoin_data() # Get Bitcoin data
+          if ((bid is None)or(ask is  None)or(mark is None)):
+            print("Nonetype issue dodged")
+          else:
             writer.writerow({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark}) # Write data to CSV
             print({'Time' : ts, 'Bid Price': bid, 'Ask Price': ask, 'Mark Price' : mark})
+        else:
+            print("no internet, trying again in 5 seconds...")
         time.sleep(5) # Wait for 5 seconds
